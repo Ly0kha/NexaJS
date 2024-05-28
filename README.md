@@ -18,14 +18,15 @@ NexaJS is a Python script designed to scrape and analyze JavaScript files from a
 
 ## Installation
 
-
-1. Clone the repository:
+ 1.Clone the repository:
+```
     git clone https://github.com/Ly0kha/NexaJS.git
-   
     cd NexaJS
-
+```
 3. Install the required dependencies:
+```
     pip install -r requirements.txt
+```
 
 ## Usage
 
