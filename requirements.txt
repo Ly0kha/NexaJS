@@ -1,0 +1,6 @@
+requests
+beautifulsoup4
+argparse
+urllib3
+jsonlib
+js2py
