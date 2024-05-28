@@ -1,4 +1,4 @@
-# ![NexaJS Logo](https://raw.githubusercontent.com/Ly0kha/scraper/main/DALL%C2%B7E%202024-05-28%2012.39.28%20-%20Create%20a%20modern%20and%20professional%20logo%20for%20NexaJS.%20The%20logo%20should%20reflect%20the%20concept%20of%20JavaScript%20and%20web%20scraping.%20Use%20a%20combination%20of%20blue%20and%20gr.webp?token=GHSAT0AAAAAACKP3NDF5RKH52VFJCQQ2DW4ZSV2GUQ) **NexaJS**
+**NexaJS**
 
 ![Python](https://img.shields.io/badge/Python-3.x-blue.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
