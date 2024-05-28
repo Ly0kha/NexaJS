@@ -32,7 +32,7 @@ NexaJS is a Python script designed to scrape and analyze JavaScript files from a
 
 Run the script with the necessary arguments:
 
-python nexajs.py --url <website_url> --output <output_file> --format <output_format> --timeout <timeout> --retries <retries> --exclude <exclude_patterns> --verbose
+``` python nexajs.py --url <website_url> --output <output_file> --format <output_format> --timeout <timeout> --retries <retries> --exclude <exclude_patterns> --verbose ```
 
 ### Arguments
 
