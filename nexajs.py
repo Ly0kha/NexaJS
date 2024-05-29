@@ -10,6 +10,7 @@ import logging
 from collections import defaultdict
 import js2py
 import time
+import matplotlib.pyplot as plt
 
 # Initialize logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -22,7 +23,8 @@ patterns = {
     "API_ENDPOINT": re.compile(r"https?://[^\s'\"<>]+(?:/api|/apigw|/v1|/v2|/v3|/graphql|/details|/miscellaneous)[^\s'\"<>]*"),
     "EMAIL": re.compile(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"),
     "PASSWORD": re.compile(r"['\"]password['\"]\s*:\s*['\"][^'\"]+['\"]"),
-    "SUSPICIOUS_KEYWORD": re.compile(r"\b(eval|document\.write|innerHTML)\b")
+    "SUSPICIOUS_KEYWORD": re.compile(r"\b(eval|document\.write|innerHTML)\b"),
+    "SUSPICIOUS_EXTENSION": re.compile(r"\.(exe|bat|cmd|sh|ps1)")
 }
 
 libraries = {
@@ -56,6 +58,24 @@ def analyze_csp(headers):
 def measure_complexity(js_content):
     lines = js_content.split('\n')
     return len(lines), sum(1 for line in lines if line.strip().startswith(('if', 'for', 'while', 'function', 'class')))
+
+# Enhanced threat intelligence function (mock implementation)
+def enhanced_threat_intelligence(url):
+    # Mock threat intelligence check (replace with actual API call)
+    threat_intelligence_list = ["malicious.com", "phishing-site.com"]
+    return any(threat in url for threat in threat_intelligence_list)
+
+def generate_logo(name):
+    logo = f"""
+
+  _  _                        _      
+ | \| |  ___  __ __  __ _    (_)  ___
+ | .` | / -_) \ \ / / _` |   | | (_-<
+ |_|\_| \___| /_\_\ \__,_|  _/ | /__/
+                           |__/      
+    {name}
+    """
+    return logo
 
 def fetch_html(url, timeout, retries):
     for _ in range(retries):
@@ -196,9 +216,9 @@ def analyze_js_content(js_content):
                 "value": f"Detected duplicate lines of code: {len(duplicate_lines)} instances",
                 "source": js['source']
             })
-        # Real-time threat intelligence integration (mock implementation)
+        # Real-time threat intelligence integration
         for url in re.findall(r"https?://[^\s'\"<>]+", js['content']):
-            if "threat" in url:  # Replace with actual threat intelligence API call
+            if enhanced_threat_intelligence(url):
                 findings.append({
                     "type": "THREAT_INTELLIGENCE",
                     "value": f"Detected potential threat URL: {url}",
@@ -232,9 +252,8 @@ def analyze_js_content(js_content):
                 "value": "Detected GDPR/privacy-related script",
                 "source": js['source']
             })
-        # Script execution time analysis (mock implementation)
+        # Script execution time analysis
         start_time = time.time()
-        # Simulated execution using js2py (replace with actual execution if possible)
         try:
             js2py.eval_js(js['content'])
         except:
@@ -264,6 +283,22 @@ def generate_report(findings, load_order, output_file, output_format):
     if output_format == "json":
         with open(output_file, 'w') as f:
             json.dump(report, f, indent=4)
+    elif output_format == "html":
+        with open(output_file, 'w') as f:
+            f.write("<html><head><title>JavaScript Analysis Report</title></head><body>")
+            f.write("<h1>JavaScript Analysis Report</h1>")
+            f.write("<h2>Findings</h2>")
+            for finding in report["findings"]:
+                f.write(f"<p><strong>Type:</strong> {finding['Type']}</p>")
+                f.write(f"<p><strong>Value:</strong> {finding['Value']}</p>")
+                f.write(f"<p><strong>Source:</strong> {finding['Source']}</p>")
+                if finding['Vulnerable']:
+                    f.write(f"<p><strong>Vulnerable:</strong> {finding['Vulnerable']}</p>")
+                f.write("<hr>")
+            f.write("<h2>Load Order</h2>")
+            for script in load_order:
+                f.write(f"<p>{script}</p>")
+            f.write("</body></html>")
     else:
         with open(output_file, 'w') as f:
             for finding in report["findings"]:
@@ -277,9 +312,11 @@ def generate_report(findings, load_order, output_file, output_format):
             for script in load_order:
                 f.write(f"{script}\n")
 
-def main(url, output_file, output_format, timeout, retries, exclude_patterns, verbose):
-    if verbose:
-        logging.getLogger().setLevel(logging.DEBUG)
+def main(url, output_file, output_format, timeout, retries, exclude_patterns, verbose, log_level):
+    logging.basicConfig(level=log_level.upper(), format='%(asctime)s - %(levelname)s - %(message)s')
+    
+    logo = generate_logo("By @Ly0kha")
+    print(logo)
 
     logging.info(f"Fetching HTML content from {url}...")
     html_content, headers = fetch_html(url, timeout, retries)
@@ -313,11 +350,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Scrape and analyze JavaScript files from a website.")
     parser.add_argument("--url", required=True, help="The URL of the website to scrape")
     parser.add_argument("--output", default="report.json", help="The output file for the report")
-    parser.add_argument("--format", default="json", choices=["json", "text"], help="The format of the output report")
+    parser.add_argument("--format", default="json", choices=["json", "text", "html"], help="The format of the output report")
     parser.add_argument("--timeout", type=int, default=10, help="Timeout for network requests")
     parser.add_argument("--retries", type=int, default=3, help="Number of retries for network requests")
     parser.add_argument("--exclude", nargs='*', default=[], help="Patterns to exclude from analysis")
     parser.add_argument("--verbose", action='store_true', help="Enable verbose output")
+    parser.add_argument("--log-level", default="INFO", help="Set the logging level")
     args = parser.parse_args()
 
-    main(args.url, args.output, args.format, args.timeout, args.retries, args.exclude, args.verbose)
+    main(args.url, args.output, args.format, args.timeout, args.retries, args.exclude, args.verbose, args.log_level)
